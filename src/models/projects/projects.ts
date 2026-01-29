@@ -20,7 +20,7 @@ export class Projects {
     @Column({ nullable: true })
     cover: string;
 
-    @Column('text', { array: true, nullable: true })
+    @Column('text', { array: true, default: [] })
     tags: string[];
 
     @Column('text', { array: true, nullable: true })
