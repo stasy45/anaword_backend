@@ -1,12 +1,12 @@
 import { Request } from 'express';
-import { CanActivate, ExecutionContext, Injectable, ConflictException, Inject, UnauthorizedException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, Inject, UnauthorizedException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Reflector, REQUEST } from '@nestjs/core';
 
 import { IS_PUBLIC_KEY } from './public.decorator';
 import { AuthService } from 'src/services/auth/auth.service';
 import { verifySignedUserId } from 'src/utils/cookie';
 import { ProjectsService } from 'src/services/projects/projects.service';
-import { VALIDATION, VALIDATION_ERROR } from 'env';
+import { VALIDATION } from 'src/env';
 
 
 
@@ -47,30 +47,6 @@ export class AuthGuard implements CanActivate {
 
 
 @Injectable()
-export class UserHasAccessFolderGuard implements CanActivate {
-  constructor(
-    private projectsService: ProjectsService,
-    @Inject(REQUEST) private readonly request: Request,
-  ) { }
-
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const user = context.switchToHttp().getRequest<Request>()['user'];
-    const folder = await this.projectsService.folderById(Number(this.request.params['folderId']))
-
-    if (!folder) {
-      throw new NotFoundException(VALIDATION.FOLDERNOTFOUND);
-    }
-
-    if (folder.userId !== user.id) {
-      throw new ForbiddenException(VALIDATION.FOLDERNOTFOUND);
-    }
-
-    return true;
-  }
-}
-
-
-@Injectable()
 export class UserHasAccessProjectGuard implements CanActivate {
   constructor(
     private projectsService: ProjectsService,
@@ -87,34 +63,6 @@ export class UserHasAccessProjectGuard implements CanActivate {
 
     if (project.userId !== user.id) {
       throw new ForbiddenException(VALIDATION.PROJECTNOACCESS);
-    }
-
-    return true;
-  }
-}
-
-
-@Injectable()
-export class NoParentGuard implements CanActivate {
-  constructor(
-    private projectsService: ProjectsService,
-    @Inject(REQUEST) private readonly request: Request,
-  ) { }
-
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const user = context.switchToHttp().getRequest<Request>()['user'];
-    const parentId = Number(this.request.query['parentId']) ?? this.request.body['parentId']
-
-    if (!parentId) return true
-
-    const parent = await this.projectsService.folderById(parentId)
-
-    if (!parent) {
-      throw new NotFoundException(VALIDATION.PARENTNOTFOUND);
-    }
-
-    if (parent.userId !== user.id) {
-      throw new ForbiddenException(VALIDATION.PARENTNOACCESS);
     }
 
     return true;

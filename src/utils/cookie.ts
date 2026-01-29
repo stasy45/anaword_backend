@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { COOKIE_SECRET } from 'env';
+import { COOKIE_SECRET } from 'src/env';
 
 export function verifySignedUserId(signedCookie: string): number | null {
   if (!signedCookie) {

@@ -1,10 +1,14 @@
-import { APP_PORT } from 'env';
+import * as serveStatic from 'serve-static';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
+import { join } from 'path';
 import { NestFactory } from '@nestjs/core';
 import { BadRequestException, ValidationError, ValidationPipe } from '@nestjs/common';
+import { APP_PORT } from './env';
 import { AppModule } from './app.module';
 import { ErrorBoundaryFilter } from './utils/error-boundary.filter';
+
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,6 +32,7 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new ErrorBoundaryFilter());
   app.use(cookieParser());
+  app.use('/images', serveStatic(join(process.cwd(), '..', 'images')));
   app.use(express.json({ strict: false }));
   await app.listen(APP_PORT);
 }

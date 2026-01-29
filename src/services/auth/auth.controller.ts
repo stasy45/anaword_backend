@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Post, Res, Req, UsePipes, ValidationPipe, UseGuards } from "@nestjs/common";
 import { Response, Request } from 'express';
 import * as crypto from 'crypto';
-import { COOKIE_SECRET } from "env";
 import { AuthDTO } from "src/dtos/auth.dto";
 import { AuthService } from "./auth.service";
-import { AuthGuard } from "src/guards/guards";
+import { AuthGuard } from "src/guards/common";
+import { COOKIE_SECRET } from "src/env";
 
 
 
@@ -34,7 +34,7 @@ export class AuthController {
 
     res.cookie('userId', signedUserId, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });

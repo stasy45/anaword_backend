@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from "class-validator";
-import { VALIDATION_ERROR } from "env";
+import { VALIDATION_ERROR } from "src/env";
 
 
 

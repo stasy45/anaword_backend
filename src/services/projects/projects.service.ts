@@ -5,6 +5,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Projects } from 'src/models/projects/projects';
 import { Folders } from 'src/models/projects/folders';
+import { Notes } from 'src/models/projects/notes';
+import { Pins } from 'src/models/projects/pins';
 
 
 
@@ -15,6 +17,10 @@ export class ProjectsService {
     private projectsRepository: Repository<Projects>,
     @InjectRepository(Folders)
     private foldersRepository: Repository<Folders>,
+    @InjectRepository(Notes)
+    private notesRepository: Repository<Notes>,
+    @InjectRepository(Pins)
+    private pinsRepository: Repository<Pins>,
   ) { }
 
   //#region db utils
@@ -81,8 +87,44 @@ export class ProjectsService {
     return await this.projectsRepository.save({ userId, ...project });
   }
 
-  async updateProject(project: Partial<Projects>): Promise<void> {
-    await this.projectsRepository.update(project.id, { ...project });
+  async updateProject(projectId: number, project: Partial<Projects>): Promise<void> {
+    await this.projectsRepository.update(projectId, { ...project });
+  }
+
+  // -------------
+
+  async notesByProject(projectId: number, isArchived: boolean = false): Promise<Notes[] | null> {
+    return await this.notesRepository.findBy({ projectId, isArchived });
+  }
+
+  async noteById(noteId: number, isArchived: boolean = false): Promise<Notes | null> {
+    return await this.notesRepository.findOneBy({ id: noteId, isArchived });
+  }
+
+  async createNote(projectId: number, note: Partial<Notes>): Promise<Notes> {
+    return await this.notesRepository.save({ projectId, ...note });
+  }
+
+  async updateNote(noteId: number, note: Partial<Notes>): Promise<void> {
+    await this.notesRepository.update(noteId, { ...note });
+  }
+
+  // -------------
+
+  async pinsByProject(projectId: number, isArchived: boolean = false): Promise<Pins[] | null> {
+    return await this.pinsRepository.findBy({ projectId, isArchived });
+  }
+
+  async pinById(pinId: number, isArchived: boolean = false): Promise<Pins | null> {
+    return await this.pinsRepository.findOneBy({ id: pinId, isArchived });
+  }
+
+  async createPin(projectId: number, pin: Partial<Pins>): Promise<Pins> {
+    return await this.pinsRepository.save({ projectId, ...pin });
+  }
+  
+  async updatePin(pinId: number, pin: Partial<Pins>): Promise<void> {
+    await this.pinsRepository.update(pinId, { ...pin });
   }
 
   //#endregion db utils
@@ -135,9 +177,9 @@ export class ProjectsService {
 
   async softDeleteFolder(userId: number, folderId: number): Promise<void> {
     (await this.projectsByParent(folderId, userId)).map(project => {
-      this.updateProject({ id: project.id, isDeleted: true })
+      this.updateProject(project.id, { isDeleted: true, deletedDate: new Date() })
     })
-    this.updateFolder({ id: folderId, isDeleted: true });
+    this.updateFolder({ id: folderId, isDeleted: true, deletedDate: new Date() });
   }
 
   //#endregion requests

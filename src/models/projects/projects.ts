@@ -1,8 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { Folders } from '../projects/folders';
 import { Users } from '../public/users';
 
-
+export type Integration = {
+    link: string
+}
 
 @Entity({ name: "projects", schema: "projects" })
 export class Projects {
@@ -18,8 +20,17 @@ export class Projects {
     @Column({ nullable: true })
     cover: string;
 
+    @Column('text', { array: true, nullable: true })
+    tags: string[];
+
+    @Column('text', { array: true, nullable: true })
+    integrations: string[];
+
     @Column({ default: false })
     isDeleted: boolean;
+
+    @Column({ type: 'timestamp', nullable: true })
+    deletedDate: Date;
 
     @Column({ nullable: true })
     parentId: number;
@@ -34,4 +45,7 @@ export class Projects {
     @ManyToOne(() => Users, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: Users;
+
+    @CreateDateColumn({ type: 'timestamp' })
+    creationDate: Date;
 }

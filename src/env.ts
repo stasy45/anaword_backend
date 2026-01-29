@@ -1,5 +1,4 @@
 export const APP_PORT = 8000;
-export const APP_HOST = 'http://localhost'
 
 export const DB = {
   HOST: 'localhost',
@@ -26,7 +25,12 @@ export const VALIDATION = {
   FOLDERNOACCESS: "У вас нет прав доступа к этой папке",
   FOLDERNOTFOUND: "Папка не найдена",
   PROJECTNOTFOUND: "Проект не найден",
-  PROJECTNOACCESS: "У вас нет прав доступа к этому проекту"
+  PROJECTNOACCESS: "У вас нет прав доступа к этому проекту",
+  NOTENOTFOUND: "Такой заметки не существует",
+  PINNOTFOUND: "Пин не найден",
+  FILENOTFOUND: "Файл не был отправлен",
 }
 
 export const COOKIE_SECRET = 'a1b2c3d4e5f67890123456789012345678901234567890123456789012345678'
+
+export const DEFAULT_IMAGE_DEST = '../images';

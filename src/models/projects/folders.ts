@@ -13,6 +13,9 @@ export class Folders {
 
     @Column({ default: false })
     isDeleted: boolean;
+    
+    @Column({ type: 'timestamp', nullable: true })
+    deletedDate: Date;
 
     @Column({ nullable: true })
     parentId: number;

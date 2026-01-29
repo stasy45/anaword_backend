@@ -1,4 +1,4 @@
-import { DB } from 'env';
+import { DB } from './env';
 
 import { DiscoveryModule } from '@nestjs/core';
 import { Module } from '@nestjs/common';
@@ -8,6 +8,8 @@ import { ConfigModule } from '@nestjs/config';
 import { Users } from './models/public/users';
 import { Folders } from './models/projects/folders';
 import { Projects } from './models/projects/projects';
+import { Notes } from './models/projects/notes';
+import { Pins } from './models/projects/pins';
 
 import { AuthModule } from './services/auth/auth.module';
 import { ProjectsModule } from './services/projects/projects.module';
@@ -31,7 +33,9 @@ import { ProjectsModule } from './services/projects/projects.module';
       entities: [
         Users,
         Folders,
-        Projects
+        Projects,
+        Notes,
+        Pins,
       ],
     }),
   ],
