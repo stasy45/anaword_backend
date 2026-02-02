@@ -12,6 +12,7 @@ import { ErrorBoundaryFilter } from './utils/error-boundary.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use('/images', serveStatic(join(process.cwd(), '..', 'images')));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({
@@ -32,7 +33,6 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new ErrorBoundaryFilter());
   app.use(cookieParser());
-  app.use('/images', serveStatic(join(process.cwd(), '..', 'images')));
   app.use(express.json({ strict: false }));
   await app.listen(APP_PORT);
 }

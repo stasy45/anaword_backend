@@ -127,7 +127,7 @@ export class ProjectsController {
   @UseGuards(UserHasAccessProjectGuard)
   @Get(':projectId/notes')
   async getNotes(@Param() params: { projectId: number }): Promise<NoteDTO[]> {
-    return (await this.projectsService.notesByProject(params.projectId)).map(note => {
+    return (await this.projectsService.notesByProject(params.projectId)).sort((notePrev, noteNext) => notePrev.position - noteNext.position).map(note => {
       delete note.archivedDate, delete note.isArchived, delete note.projectId
       return { ...note, textJSON: JSON.stringify(note.textJSON), creationDate: `${note.creationDate.toLocaleDateString()} ${note.creationDate.toLocaleTimeString()}` }
     })
@@ -138,7 +138,14 @@ export class ProjectsController {
   @UsePipes(ValidationPipe)
   async postNote(@Param() params: { projectId: number }, @Body() body: TextJSONDTO): Promise<void> {
     const textJSON = JSON.parse(body.textJSON)
-    await this.projectsService.createNote(params.projectId, { ...body, textJSON })
+    await this.projectsService.createNote(params.projectId, { ...body, textJSON, position: 0 })
+  }
+
+  @UseGuards(UserHasAccessProjectGuard)
+  @Patch(':projectId/notes')
+  @UsePipes(ValidationPipe)
+  async patchNotesOrder(@Body() body: number[]): Promise<void> {
+    await body.map((id, idx) => this.projectsService.updateNote(id, { position: idx }))
   }
 
   @UseGuards(UserHasAccessProjectGuard, NoNoteGuard)

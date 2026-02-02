@@ -18,6 +18,9 @@ export class Notes {
     archivedDate: Date;
 
     @Column()
+    position: number;
+
+    @Column()
     projectId: number;
 
     @ManyToOne(() => Projects, { onDelete: 'CASCADE' })
